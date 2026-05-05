@@ -3,64 +3,99 @@
 @section('title', 'Tambah Buku')
 
 @section('content')
-    <div class="page-title">Tambah Buku</div>
-    <div class="page-sub">Isi form di bawah untuk menambah buku baru</div>
+<div class="bg-white rounded-xl shadow p-6">
+  <h1 class="text-xl font-bold mb-6">Tambah Buku Baru</h1>
 
-    <div class="card">
-        <form action="{{ route('books.store') }}" method="POST">
-            @csrf
+  <!-- action → store(), method POST, @csrf wajib! -->
+  <form action="{{ route('books.store') }}"
+        method="POST"
+        class="space-y-4">
 
-            <div class="form-group">
-                <label class="form-label">Judul Buku *</label>
-                <input type="text" name="judul" class="form-control @error('judul') is-invalid @enderror"
-                       value="{{ old('judul') }}" placeholder="Masukkan judul buku...">
-                @error('judul')
-                    <div class="invalid-feedback">⚠ {{ $message }}</div>
-                @enderror
-            </div>
+    @csrf <!-- WAJIB: token keamanan -->
 
-            <div class="form-group">
-                <label class="form-label">Penulis *</label>
-                <input type="text" name="penulis" class="form-control @error('penulis') is-invalid @enderror"
-                       value="{{ old('penulis') }}" placeholder="Nama penulis...">
-                @error('penulis')
-                    <div class="invalid-feedback">⚠ {{ $message }}</div>
-                @enderror
-            </div>
+    <!-- Field: Judul -->
+    <div>
+      <label class="block text-sm font-medium">Judul Buku</label>
+      <input type="text" name="title"
+             value="{{ old('title') }}"
+             class="mt-1 w-full border rounded-lg px-3 py-2
+                    @error('title') border-red-400 bg-red-50 @enderror">
 
-            <div class="form-group">
-                <label class="form-label">ISBN *</label>
-                <input type="text" name="isbn" class="form-control @error('isbn') is-invalid @enderror"
-                       value="{{ old('isbn') }}" placeholder="Contoh: 9786020650180">
-                @error('isbn')
-                    <div class="invalid-feedback">⚠ {{ $message }}</div>
-                @enderror
-            </div>
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem">
-                <div class="form-group">
-                    <label class="form-label">Harga (Rp)</label>
-                    <input type="number" name="harga" class="form-control @error('harga') is-invalid @enderror"
-                           value="{{ old('harga') }}" placeholder="0" min="0">
-                    @error('harga')
-                        <div class="invalid-feedback">⚠ {{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Tahun Terbit</label>
-                    <input type="number" name="tahun_terbit" class="form-control @error('tahun_terbit') is-invalid @enderror"
-                           value="{{ old('tahun_terbit') }}" placeholder="2024" min="1900" max="2099">
-                    @error('tahun_terbit')
-                        <div class="invalid-feedback">⚠ {{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-
-            <div style="display:flex; gap:.75rem; margin-top:.5rem">
-                <button type="submit" class="btn btn-primary">💾 Simpan Buku</button>
-                <a href="{{ route('books.index') }}" class="btn btn-secondary">Batal</a>
-            </div>
-        </form>
+      <!-- Tampilkan pesan error field title -->
+      @error('title')
+        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+      @enderror
     </div>
+
+    <!-- Field: Penulis -->
+    <div>
+      <label class="block text-sm font-medium">Penulis</label>
+      <input type="text" name="author"
+             value="{{ old('author') }}"
+             class="mt-1 w-full border rounded-lg px-3 py-2
+                    @error('author') border-red-400 bg-red-50 @enderror">
+      @error('author')
+        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+      @enderror
+    </div>
+
+    <!-- Field: ISBN dan Harga (2 kolom) -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium">ISBN</label>
+        <input type="text" name="isbn"
+               value="{{ old('isbn') }}"
+               class="mt-1 w-full border rounded-lg px-3 py-2
+                      @error('isbn') border-red-400 bg-red-50 @enderror">
+        @error('isbn')
+          <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+        @enderror
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Harga (Rp)</label>
+        <input type="number" name="price"
+               value="{{ old('price') }}"
+               class="mt-1 w-full border rounded-lg px-3 py-2
+                      @error('price') border-red-400 bg-red-50 @enderror">
+        @error('price')
+          <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+        @enderror
+      </div>
+    </div>
+
+    <!-- Field: Stok -->
+    <div>
+      <label class="block text-sm font-medium">Stok</label>
+      <input type="number" name="stock"
+             value="{{ old('stock', 0) }}" min="0"
+             class="mt-1 w-full border rounded-lg px-3 py-2
+                    @error('stock') border-red-400 bg-red-50 @enderror">
+      @error('stock')
+        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+      @enderror
+    </div>
+
+
+    <!-- Field: Deskripsi (nullable / opsional) -->
+    <div>
+      <label class="block text-sm font-medium">Deskripsi <span class="text-gray-400">(opsional)</span></label>
+      <textarea name="description" rows="3"
+                class="mt-1 w-full border rounded-lg px-3 py-2
+                       @error('description') border-red-400 bg-red-50 @enderror">{{ old('description') }}</textarea>
+      @error('description')
+        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+      @enderror
+    </div>
+
+    <!-- Tombol Submit -->
+    <div class="flex gap-3 pt-2">
+      <button type="submit"
+              class="bg-indigo-600 text-white px-6 py-2 rounded-lg">
+        Simpan Buku
+      </button>
+      <a href="{{ route('books.index') }}"
+         class="border px-6 py-2 rounded-lg">Batal</a>
+    </div>
+  </form>
+</div>
 @endsection

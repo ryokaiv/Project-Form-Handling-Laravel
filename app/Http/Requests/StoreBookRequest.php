@@ -6,36 +6,51 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBookRequest extends FormRequest
 {
+    /** Tentukan apakah user boleh melakukan request ini */
     public function authorize(): bool
     {
-        return true;
+        return true; // true = semua user boleh
     }
 
+    /** Aturan validasi */
     public function rules(): array
     {
         return [
-            'judul'        => 'required|string|min:3|max:255',
-            'penulis'      => 'required|string|min:3|max:255',
-            'isbn'         => 'required|string|unique:books,isbn',
-            'harga'        => 'nullable|numeric|min:0',
-            'tahun_terbit' => 'nullable|integer|min:1900|max:2099',
+            'title'       => 'required|string|min:3|max:255',
+            'author'      => 'required|string|max:100',
+            'isbn'        => 'required|string|unique:books,isbn|max:20',
+            'price'       => 'required|numeric|min:0',
+            'stock'       => 'required|integer|min:0',
+            'description' => 'nullable|string|max:1000',
         ];
     }
 
+    /** Pesan error kustom dalam bahasa Indonesia */
     public function messages(): array
     {
         return [
-            'judul.required'        => 'Judul buku wajib diisi.',
-            'judul.min'             => 'Judul minimal 3 karakter.',
-            'penulis.required'      => 'Nama penulis wajib diisi.',
-            'penulis.min'           => 'Nama penulis minimal 3 karakter.',
-            'isbn.required'         => 'ISBN wajib diisi.',
-            'isbn.unique'           => 'ISBN sudah terdaftar di sistem.',
-            'harga.numeric'         => 'Harga harus berupa angka.',
-            'harga.min'             => 'Harga tidak boleh negatif.',
-            'tahun_terbit.integer'  => 'Tahun terbit harus berupa angka.',
-            'tahun_terbit.min'      => 'Tahun terbit tidak valid.',
-            'tahun_terbit.max'      => 'Tahun terbit tidak valid.',
+            'title.required'  => 'Judul buku wajib diisi.',
+            'title.min'       => 'Judul minimal :min karakter.',
+            'author.required' => 'Nama penulis wajib diisi.',
+            'isbn.required'   => 'ISBN wajib diisi.',
+            'isbn.unique'     => 'ISBN :input sudah terdaftar di sistem.',
+            'price.required'  => 'Harga wajib diisi.',
+            'price.numeric'   => 'Harga harus berupa angka.',
+            'price.min'       => 'Harga tidak boleh negatif.',
+            'stock.required'  => 'Stok wajib diisi.',
+            'stock.integer'   => 'Stok harus berupa bilangan bulat.',
+        ];
+    }
+
+    /** Nama atribut yang ramah di pesan error */
+    public function attributes(): array
+    {
+        return [
+            'title'  => 'Judul',
+            'author' => 'Penulis',
+            'isbn'   => 'ISBN',
+            'price'  => 'Harga',
+            'stock'  => 'Stok',
         ];
     }
 }

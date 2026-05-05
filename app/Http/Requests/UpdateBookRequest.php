@@ -3,37 +3,24 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
 class UpdateBookRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
+    public function authorize(): bool { return true; }
 
     public function rules(): array
     {
-        return [
-            'judul'        => 'required|string|min:3|max:255',
-            'penulis'      => 'required|string|min:3|max:255',
-            'isbn'         => 'required|string|unique:books,isbn,' . $this->book->id,
-            'harga'        => 'nullable|numeric|min:0',
-            'tahun_terbit' => 'nullable|integer|min:1900|max:2099',
-        ];
-    }
+        // Ambil ID buku dari route untuk mengecualikan
+        // buku saat ini dari pengecekan ISBN unique
+        $bookId = $this->route('book')->id;
 
-    public function messages(): array
-    {
         return [
-            'judul.required'        => 'Judul buku wajib diisi.',
-            'judul.min'             => 'Judul minimal 3 karakter.',
-            'penulis.required'      => 'Nama penulis wajib diisi.',
-            'penulis.min'           => 'Nama penulis minimal 3 karakter.',
-            'isbn.required'         => 'ISBN wajib diisi.',
-            'isbn.unique'           => 'ISBN sudah terdaftar di sistem.',
-            'harga.numeric'         => 'Harga harus berupa angka.',
-            'harga.min'             => 'Harga tidak boleh negatif.',
-            'tahun_terbit.integer'  => 'Tahun terbit harus berupa angka.',
+            'title'       => 'required|string|min:3|max:255',
+            'author'      => 'required|string|max:100',
+            // Unique tapi kecualikan ID buku yang sedang diedit
+            'isbn'        => "required|string|unique:books,isbn,{$bookId}|max:20",
+            'price'       => 'required|numeric|min:0',
+            'stock'       => 'required|integer|min:0',
+            'description' => 'nullable|string|max:1000',
         ];
     }
 }

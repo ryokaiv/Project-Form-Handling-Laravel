@@ -3,58 +3,75 @@
 @section('title', 'Daftar Buku')
 
 @section('content')
-    <x-alert />
+<div class="bg-white rounded-xl shadow p-6">
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem">
-        <div>
-            <div class="page-title">Daftar Buku</div>
-            <div class="page-sub">Total {{ $books->total() }} buku terdaftar</div>
-        </div>
-        <a href="{{ route('books.create') }}" class="btn btn-primary">+ Tambah Buku</a>
-    </div>
+  <!-- Header halaman -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-xl font-bold">📚 Daftar Buku</h1>
+    <a href="{{ route('books.create') }}"
+       class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+      + Tambah Buku
+    </a>
+  </div>
 
-    <div class="card">
-        @if($books->isEmpty())
-            <div style="text-align:center; padding:3rem; color:#64748b">
-                <div style="font-size:2rem">📭</div>
-                <div style="margin-top:.5rem">Belum ada buku. Tambah sekarang!</div>
-            </div>
-        @else
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Judul</th>
-                        <th>Penulis</th>
-                        <th>ISBN</th>
-                        <th>Harga</th>
-                        <th>Tahun</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($books as $book)
-                    <tr>
-                        <td style="color:#64748b">{{ $loop->iteration }}</td>
-                        <td style="font-weight:600">{{ $book->judul }}</td>
-                        <td style="color:#94a3b8">{{ $book->penulis }}</td>
-                        <td><span class="badge" style="background:#1e2538;color:#818cf8">{{ $book->isbn }}</span></td>
-                        <td>{{ $book->harga ? 'Rp ' . number_format($book->harga, 0, ',', '.') : '-' }}</td>
-                        <td>{{ $book->tahun_terbit ?? '-' }}</td>
-                        <td style="display:flex;gap:.5rem">
-                            <a href="{{ route('books.edit', $book) }}" class="btn btn-warning">Edit</a>
-                            <form action="{{ route('books.destroy', $book) }}" method="POST"
-                                  onsubmit="return confirm('Hapus buku ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            <div style="margin-top:1rem">{{ $books->links() }}</div>
-        @endif
-    </div>
+  <!-- Tabel buku -->
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-left">
+      <tr>
+        <th class="px-4 py-3 font-semibold">#</th>
+        <th class="px-4 py-3 font-semibold">Judul</th>
+        <th class="px-4 py-3 font-semibold">Penulis</th>
+        <th class="px-4 py-3 font-semibold">ISBN</th>
+        <th class="px-4 py-3 font-semibold">Harga</th>
+        <th class="px-4 py-3 font-semibold">Stok</th>
+        <th class="px-4 py-3 font-semibold text-center">Aksi</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+
+      <!-- Jika tidak ada buku -->
+      @forelse ($books as $book)
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 text-gray-400">{{ $loop->iteration }}</td>
+        <td class="px-4 py-3 font-medium">{{ $book->title }}</td>
+        <td class="px-4 py-3 text-gray-600">{{ $book->author }}</td>
+        <td class="px-4 py-3 font-mono text-xs text-gray-500">{{ $book->isbn }}</td>
+        <td class="px-4 py-3">Rp {{ number_format($book->price, 0, ',', '.') }}</td>
+        <td class="px-4 py-3">{{ $book->stock }}</td>
+        <td class="px-4 py-3 text-center">
+          <!-- Tombol Edit -->
+          <a href="{{ route('books.edit', $book) }}"
+             class="text-indigo-600 hover:underline mr-3 text-sm">Edit</a>
+
+          <!-- Form Hapus (DELETE dengan method spoofing) -->
+          <form action="{{ route('books.destroy', $book) }}"
+                method="POST"
+                class="inline"
+                onsubmit="return confirm('Yakin hapus buku ini?')">
+            @csrf
+            @method('DELETE')
+            <button type="submit"
+                    class="text-red-500 hover:underline text-sm">Hapus</button>
+          </form>
+        </td>
+      </tr>
+
+      @empty
+      <tr>
+        <td colspan="7" class="px-4 py-8 text-center text-gray-400">
+          Belum ada buku. <a href="{{ route('books.create') }}"
+          class="text-indigo-600 hover:underline">Tambah sekarang →</a>
+        </td>
+      </tr>
+      @endforelse
+
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="mt-4">
+    {{ $books->links() }}
+  </div>
+
+</div>
 @endsection
